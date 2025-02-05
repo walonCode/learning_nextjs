@@ -1,13 +1,23 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import axios from "axios"
 
 export default function SignUp(){
+    const router  = useRouter()
     const [username, SetUserName] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [email, SetEmail] = useState<string>("")
+    const [buttonDisable, setButtonDisable] = useState<boolean>(false)
+
+    useEffect(() => {
+        if(username.length >  0 && email.length > 0 && password.length > 0){
+            setButtonDisable(false)
+        }else{
+            setButtonDisable(true)
+        }
+    },[email,password,username])
 
     const onSignUp =  async() => {
     }
@@ -56,7 +66,7 @@ export default function SignUp(){
                         />
                     </div>
                     <div className="flex flex-row items-center justify-center">
-                        <button onClick={onSignUp} className="border-2  border-black/50 py-1 px-10 font-bold text-xl text-black rounded-xl">signup</button>
+                        <button onClick={onSignUp} className="border-2  border-black/50 py-1 px-10 font-bold text-xl text-black rounded-xl">{buttonDisable ? "No signup" : "signup"}</button>
                     </div>
               </div>
                 </form>
