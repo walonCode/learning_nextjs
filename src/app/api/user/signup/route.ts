@@ -3,7 +3,6 @@ import User from "@/models/userModel";
 import { NextRequest,NextResponse } from "next/server";
 import bcryptjs from 'bcryptjs'
 
-
 ConnectDB()
 
 export async function POST(req:NextRequest){
@@ -17,7 +16,7 @@ export async function POST(req:NextRequest){
 
         const user = await User.findOne({ email })
         if(user){
-            return NextResponse.json({message:"User aleady exist"},{status:401})
+            return NextResponse.json({message:"User aleady exist"},{status:409})
         }
 
         const passwordHashed = await bcryptjs.hash(password, 10)
@@ -33,7 +32,7 @@ export async function POST(req:NextRequest){
         const userResponse = newUser.toObject()
         delete userResponse.password
 
-        return NextResponse.json({message:"User created",userResponse})
+        return NextResponse.json({message:"User created",userResponse},{status:201})
 
 
     }catch(error:unknown){
