@@ -12,20 +12,26 @@ export async function POST(req:NextRequest){
         const { password, username} = reqBody;
 
         if(!username || !password){
-            return NextResponse.json({message:"All fields required"});
+            return NextResponse.json({message:"All fields required"},{status:400});
         }
 
         const user = await User.findOne({ username });
         if(!user){
-            return NextResponse.json({message:"Invalid username"})
+            return NextResponse.json({message:"Invalid username"},{status:401})
         }
 
         const passwordMatch = await bcryptjs.compare(password, user.password)
         if(!passwordMatch){
-            return NextResponse.json({message:"Invalid password"})
+            return NextResponse.json({message:"Invalid password"},{status:401})
         }
 
-        const accessToken = jwt.sign({id:user._id},process.env.ACCESS_TOKEN_SECRET!,{
+        const tokenData = {
+            id:user._id,
+            // username:user.username,
+            // email:user.email
+        }
+
+        const accessToken = jwt.sign(tokenData,process.env.ACCESS_TOKEN_SECRET!,{
             expiresIn:"1d"
         })
      

@@ -10,6 +10,7 @@ export default function Login() {
     const [password, setPassword] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
     const [buttonDisabled,setButtonDisabled] = useState<boolean>(false)
+    const [errorMessage, setErrorMessage] = useState<string>("")
 
 
     useEffect(() => {
@@ -21,12 +22,18 @@ export default function Login() {
         e.preventDefault();
         try {
             setLoading(true);
+            setErrorMessage("")
             const loginUser = { username, password };
             const res = await axios.post('/api/user/login', loginUser);
-            console.log("Login successful:", res.data);
-            router.push('/profile');
+            if(res.status === 200){
+                console.log(res.data)
+                router.push('/profile')
+            }else{
+                setErrorMessage('login failed')
+            }
         } catch (error) {
             console.error("Login error:", error);
+            setErrorMessage("Invalid username")
         } finally {
             setLoading(false);
         }
@@ -35,7 +42,7 @@ export default function Login() {
     return (
         <section className="flex flex-col min-h-screen items-center justify-center">
             <div className="py-10">
-                <h2 className="text-5xl font-bold">Login</h2>
+                <h2 className="text-5xl font-bold">{errorMessage? errorMessage : "Login"}</h2>
             </div>
             <main>
                 <form onSubmit={onLogin} className="flex flex-col py-2">
