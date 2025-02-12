@@ -2,6 +2,7 @@ import ConnectDB from "@/configs/mongoDB";
 import User from "@/models/userModel";
 import { NextRequest,NextResponse } from "next/server";
 import bcryptjs from 'bcryptjs'
+import { sendEmail } from "@/helpers/mailer";
 
 ConnectDB()
 
@@ -31,6 +32,9 @@ export async function POST(req:NextRequest){
 
         const userResponse = newUser.toObject()
         delete userResponse.password
+
+        //send email
+        await sendEmail(email,"VERIFY",newUser._id.toString())
 
         return NextResponse.json({message:"User created",userResponse},{status:201})
 
